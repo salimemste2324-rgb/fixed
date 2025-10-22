@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zakho Institute</title>
+    <link rel="icon" href="images/zakho-removebg-preview.png" type="image/png">
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@100;400;700;900&family=Merriweather:wght@700;900&display=swap">
+    
+    <style>
+        /* Define the color palette and font family */
+        :root {
+            --color-primary: #1e3a8a; /* Deep Blue (Main) */
+            --color-secondary: #10b981; /* Emerald Green (Accent/Success) */
+            --color-header-bg: #60a5fa; /* Light Blue for the new header gradient start */
+            --color-header-end: #3b82f6; /* A mid-blue for gradient end */
+            --color-background-light: #f8f9fa; /* Default Body Background */
+            --color-text-light: #212529;
+            --font-sans: 'Inter', sans-serif;
+            --font-serif: 'Merriweather', serif;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--color-background-light); 
+            color: var(--color-text-light);
+            /* Keep body transition subtle, the sections will have their own transition */
+            transition: color 0.5s ease; 
+            overflow-x: hidden; 
+        }
+        
+        /* New class for elements whose background will be cycled */
+        .color-cycle-target {
+            transition: background-color 2s ease; /* Smooth transition for color change */
+        }
+
+        h1, h2, h3, .serif-title {
+            font-family: var(--font-serif);
+        }
+
+        /* ------------------------------------- */
+        /* --- Animated Header Styles --- */
+        /* ------------------------------------- */
+        .animated-header {
+            background: linear-gradient(90deg, darkgray, gray, orange, var(--color-primary), darkgray);
+            background-size: 400% 400%;
+            animation: header-color-cycle 15s ease infinite;
+        }
+        
+        @keyframes header-color-cycle {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .header-logo {
+            height: 70px; 
+            width: auto;
+            filter: brightness(0) invert(1);
+        }
+
+        /* ------------------------------------- */
+        /* --- Dynamic Button Hover Effect --- */
+        /* ------------------------------------- */
+        /* Apply to all actionable elements for dynamic effect */
+        .btn, .lang-button, .navbar-toggler, #backToTopBtn {
+            transition: all 0.3s ease-in-out;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        /* General Hover Effect: Lift and Shadow */
+        .btn:hover, .lang-button:hover, .navbar-toggler:hover, #backToTopBtn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2) !important;
+        }
+
+        /* Shine/Ripple Effect on Success Button */
+        .btn-success:not(:disabled):not(.disabled)::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            opacity: 0;
+            transform: scale(0) translate(-50%, -50%);
+        }
+
+        .btn-success:not(:disabled):not(.disabled):hover::after {
+            animation: ripple 0.6s ease-out;
+        }
+        
+        @keyframes ripple {
+            0% { transform: scale(0) translate(-50%, -50%); opacity: 1; }
+            100% { transform: scale(30) translate(-50%, -50%); opacity: 0; }
+        }
+        
+        /* Dark Mode Button Specifics */
+        .btn-outline-light:hover {
+            background-color: var(--color-secondary) !important;
+            border-color: var(--color-secondary) !important;
+            color: white !important;
+        }
+
+
+        /* ------------------------------------- */
+        /* --- Dark Mode styles --- */
+        /* ------------------------------------- */
+        
+        body.dark-mode {
+            --color-background-light: #212529;
+            --color-text-light: #f8f9fa;
+            --bs-body-color: #f8f9fa;
+            --bs-body-bg: #212529;
+        }
+        /* Override light background classes in dark mode */
+        body.dark-mode .card,
+        body.dark-mode .bg-light,
+        body.dark-mode .bg-white,
+        body.dark-mode .color-cycle-target { 
+            background-color: #343a40 !important;
+            color: #f8f9fa !important;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5) !important;
+            transition: none; /* Disable cycling transition in dark mode */
+        }
+        
+        /* Other Dark Mode styles... */
+        body.dark-mode #preloader { background: #212529; }
+        body.dark-mode .loader { border: 8px solid rgba(255, 255, 255, 0.1); border-top-color: var(--color-secondary); }
+        body.dark-mode .video-overlay { background: rgba(0, 0, 0, 0.75); }
+        body.dark-mode .text-dark, body.dark-mode .text-opacity-75 { color: #f8f9fa !important; }
+        body.dark-mode .text-secondary, body.dark-mode .text-muted { color: #adb5bd !important; }
+        body.dark-mode .lang-button { background-color: #495057 !important; color: white !important; }
+        body.dark-mode .lang-button.active { background-color: var(--color-secondary) !important; }
+        
+        /* ------------------------------------- */
+        /* --- NEW ANIMATED FOOTER STYLES (ENHANCED) --- */
+        /* ------------------------------------- */
+        .animated-footer {
+            /* Define the primary/secondary colors with a vibrant mix */
+            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary), var(--color-primary));
+            background-size: 400% 400%;
+            color: white; /* Ensure text is white for contrast */
+            animation: footer-shift 20s ease infinite;
+            /* Add a subtle shadow for depth */
+            box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        @keyframes footer-shift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .footer-icon { 
+            transition: transform 0.3s ease, color 0.3s ease; 
+            display: inline-block; 
+            color: white !important; /* Base color for icons */
+            /* Add subtle initial shadow */
+            text-shadow: 0 0 5px rgba(0,0,0,0.5); 
+            /* FIX: Remove the default underline from the anchor tag */
+            text-decoration: none !important; 
+        }
+        
+        /* Hover effect for social icons - uses secondary color */
+        .footer-icon:hover { 
+            transform: scale(1.3) rotate(5deg); /* Added a slight rotation */
+            color: #ffde59 !important; /* Brighter accent for hover (e.g., gold/yellow) */
+            text-shadow: 0 0 15px #ffde59; /* Glowing effect */
+        }
+        
+        .animated-footer .border-success {
+            border-color: #ffde59 !important; /* Ensure footer borders stand out */
+        }
+        
+        /* NEW: Style for regular links in the footer */
+        .footer-link {
+            display: inline-block;
+            color: white !important;
+            text-decoration: none;
+            position: relative;
+            padding-bottom: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .footer-link:hover {
+            color: #ffde59 !important;
+            transform: translateX(5px); /* Slide effect on hover */
+        }
+
+        /* Underline animation for the links */
+        .footer-link::after {
+            content: '';
+            position: absolute;
+            width: 0%;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: #ffde59;
+            transition: width 0.3s ease-out;
+        }
+
+        .footer-link:hover::after {
+            width: 100%;
+        }
+        
+        /* Enhanced Developer Attribution Hover */
+        .dev-attribution-container {
+            display: inline-flex; 
+            align-items: center; 
+            text-decoration: none; 
+            padding: 5px 10px; 
+            border-radius: 50px; 
+            background-color: rgba(16, 185, 129, 0.15); 
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .dev-attribution-container:hover { 
+            background-color: var(--color-secondary) !important; /* Change background to secondary color */
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5); /* Add a white glow */
+        }
+        .dev-attribution-container:hover .dev-profile-img { transform: scale(1.1); }
+        
+        /* Ensure the text is still readable in Dark Mode */
+        body.dark-mode .animated-footer {
+            box-shadow: 0 -5px 15px rgba(255, 255, 255, 0.1);
+        }
+        
+        /* --- END NEW ANIMATED FOOTER STYLES --- */
+
+        /* [Other Styles remain unchanged] */
+        .video-hero-section { position: relative; height: 80vh; min-height: 450px; overflow: hidden; display: flex; align-items: center; justify-content: center; text-align: center; }
+        .video-hero-section video { position: absolute; top: 50%; left: 50%; min-width: 100%; min-height: 100%; width: auto; height: auto; z-index: 0; transform: translate(-50%, -50%); object-fit: cover; animation: fadeInVideo 2s ease-out; }
+        @keyframes fadeInVideo { 0% { opacity: 0.5; transform: translate(-50%, -50%) scale(1.05); } 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+        .video-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.65); z-index: 1; }
+        .hero-content { position: relative; z-index: 2; color: rgb(41, 44, 52); padding: 20px; animation: slideUp 1s ease-out 0.5s forwards; opacity: 0; }
+        @keyframes slideUp { 0% { opacity: 0; transform: translateY(20px); } 100% { opacity: 1; transform: translateY(0); } }
+        .full-width-carousel { margin-bottom: 5rem; }
+        .carousel-item img { height: 400px; object-fit: cover; filter: brightness(0.9); }
+        .carousel-fade .carousel-item { opacity: 0; transition-duration: 0.6s; transition-property: opacity; }
+        .carousel-fade .carousel-item.active, .carousel-fade .carousel-item-next.carousel-item-start, .carousel-fade .carousel-item-prev.carousel-item-end { opacity: 1; }
+        .carousel-caption { background: rgba(30, 58, 138, 0.6); padding: 15px 20px; border-radius: 8px; max-width: 60%; margin: auto; bottom: 20px; }
+        #backToTopBtn { display: none; position: fixed; bottom: 30px; right: 30px; z-index: 100; border: none; outline: none; background-color: var(--color-secondary); color: white; cursor: pointer; padding: 15px; border-radius: 50%; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); opacity: 0.8; font-size: 20px; }
+        #backToTopBtn:hover { opacity: 1; background-color: var(--color-primary); }
+        #preloader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--color-background-light); z-index: 9999; display: flex; justify-content: center; align-items: center; transition: opacity 0.5s ease-out; }
+        .loader { width: 80px; height: 80px; border: 8px solid rgba(30, 58, 138, 0.2); border-top-color: var(--color-primary); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .content-card { transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease; }
+        .content-card:hover { transform: translateY(-5px) scale(1.01); box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.175) !important; border-color: var(--color-primary) !important; }
+        .dev-profile-img { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; margin-right: 5px; vertical-align: middle; transition: transform 0.3s ease; }
+        /* NOTE: The base .dev-attribution-container moved to the enhanced footer section above */
+        
+        /* NEW STYLE FOR PROGRAM IMAGES */
+        .program-image {
+            width: 100%; /* Make image take full card width */
+            height: 150px; /* Fixed height for consistency */
+            object-fit: cover; /* Ensure image covers the area without distortion */
+            border-radius: 0.5rem; /* Match card rounding */
+            margin-bottom: 1rem; /* Space below the image */
+            opacity: 0.9; /* Slightly faded look */
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .content-card:hover .program-image {
+            opacity: 1; /* Full opacity on hover */
+        }
+
+    </style>
+</head>
+<body class="text-body">
+
+    <div id="preloader">
+        <div class="loader"></div>
+    </div>
+
+    <script>
+        const contentData = {
+            'en': {
+                dir: 'ltr',
+                site_name: 'Zakho Institute',
+                welcome_headline: 'Shaping the Future, Today. (Academic Year 2019-2025)',
+                welcome_text: 'Dedicated to empowering the next generation of technical professionals in the Duhok region. Find your path to success in one of our high-demand programs.',
+                nav_home: 'Home', nav_about: 'Vision & Mission', nav_programs: 'Programs', 
+                // UPDATED VISION & MISSION (English Translation)
+                about_title: 'Our Non-Governmental Vision & Mission (2019-2025)',
+                about_text: `Vision: To be a modern development, deep-rooted in the patriotic and science-seeking plan, in a productive environment.
+                
+                Mission: 1. Developing the professional capabilities of teachers and enhancing the quality of education. 2. Raising the sense of nationalism and protecting the Kurdish heritage and culture. 3. Modernizing learning methodologies for student success while preserving character/ethics. 4. Focusing on social development and promoting Kurdish identity. 5. Emphasizing student production and innovations.`,
+                // END UPDATED VISION & MISSION
+                programs_title: 'Explore Our Diverse Programs',
+                programs_text: 'Find your specialized program below. Tuition fees are competitive and focused on providing maximum career value.',
+                contact_text: 'Ready to start your future? Apply for the next intake!',
+                program_petroleum_title: 'Petroleum & Gas Engineering',
+                program_petroleum_price: 'Tuition: 2,400,000 IQD',
+                program_petroleum_desc: 'Focus on exploration, production, and refining processes in the energy sector.',
+                program_computer_title: 'Computer Science & IT',
+                program_computer_price: 'Tuition: 1,400,000 IQD',
+                program_computer_desc: 'Advanced training in software development, networking, and data analysis.',
+                program_accounting_title: 'Accounting & Finance',
+                program_accounting_price: 'Tuition: 1,400,000 IQD',
+                program_accounting_desc: 'Developing financial management, auditing, and business administration skills.',
+                // NEW PROGRAM ADDED
+                program_management_title: 'Business Administration (Management)',
+                program_management_price: 'Tuition: 1,400,000 IQD',
+                program_management_desc: 'Preparing students to manage general operations, oversee financial activities, and lead teams.',
+                // UPDATED CONTACT INFO
+                footer_contact_title: 'Contact Zakho Institute', 
+                footer_contact_address: 'Zakho - Next (Near University of Zakho)', 
+                footer_contact_phones: '0750 682 4545 / 0750 683 4545',
+                footer_quick_links: 'Quick Links', 
+                footer_dev: 'Developed by Salim Mustefa',
+                slide1_caption: 'Advanced Laboratories: Practical skills in modern facilities.',
+                slide2_caption: 'Dedicated Faculty: Learn from industry experts and professionals.',
+                slide3_caption: 'Career Success: High graduate placement rates in the region.',
+            },
+            'ar': {
+                dir: 'rtl',
+                site_name: 'معهد زاخو (غير حكومي)',
+                welcome_headline: 'نصنع المستقبل، اليوم. (العام الدراسي 2025-2019)',
+                welcome_text: 'ملتزمون بتمكين الجيل القادم من المهنيين التقنيين في منطقة دهوك. ابحث عن طريقك للنجاح في أحد برامجنا ذات الطلب العالي.',
+                nav_home: 'الرئيسية', nav_about: 'الرؤية والرسالة', nav_programs: 'البرامج', 
+                // UPDATED VISION & MISSION (Arabic Translation)
+                about_title: 'رؤيتنا ورسالتنا غير الحكومية (2025-2019)',
+                about_text: `الرؤية: أن نكون مساراً عصرياً متجذراً في الخطة الوطنية والباحثة عن العلم، في بيئة منتجة.
+                
+                الرسالة:* 1. تنمية القدرات المهنية للمدرسين ورفع جودة التعليم. 2. تعزيز الحس الوطني وحماية التراث والثقافة الكردية. 3. تحديث منهجيات التعليم لنجاح الطلاب مع الحفاظ على الأخلاق. 4. التركيز على التنمية الاجتماعية وتعزيز الهوية الكردية. 5. الاهتمام بإنتاج الطلاب وابتكاراتهم.`,
+                // END UPDATED VISION & MISSION
+                programs_title: 'استكشف برامجنا المتنوعة',
+                programs_text: 'ابحث عن برنامجك المتخصص أدناه. الرسوم الدراسية تنافسية وتركز على توفير أقصى قيمة مهنية.',
+                contact_text: 'هل أنت مستعد لبدء مستقبلك؟ قدم طلبك للدفعة القادمة!',
+                program_petroleum_title: 'هندسة النفط والغاز',
+                program_petroleum_price: 'الرسوم: 2,400,000 دينار عراقي',
+                program_petroleum_desc: 'التركيز على عمليات الاستكشاف والإنتاج والتكرير في قطاع الطاقة.',
+                program_computer_title: 'علوم الحاسوب وتكنولوجيا المعلومات',
+                program_computer_price: 'الرسوم: 1,400,000 دينار عراقي',
+                program_computer_desc: 'تدريب متقدم في تطوير البرمجيات والشبكات وتحليل البيانات.',
+                program_accounting_title: 'المحاسبة والمالية',
+                program_accounting_price: 'الرسوم: 1,400,000 دينار عراقي',
+                program_accounting_desc: 'تطوير مهارات الإدارة المالية والتدقيق وإدارة الأعمال.',
+                // NEW PROGRAM ADDED
+                program_management_title: 'إدارة الأعمال (الإدارة)',
+                program_management_price: 'الرسوم: 1,400,000 دينار عراقي',
+                program_management_desc: 'إعداد الطلاب لإدارة العمليات العامة والإشراف على الأنشطة المالية وقيادة الفرق.',
+                // UPDATED CONTACT INFO
+                footer_contact_title: 'تواصل مع معهد زاخو', 
+                footer_contact_address: 'زاخو - بەرهێشتر (نێزیک زانکۆیا زاخۆ)', 
+                footer_contact_phones: '0750 682 4545 / 0750 683 4545',
+                footer_quick_links: 'روابط سريعة', 
+                footer_dev: 'تطوير بواسطة سليم مصطفى',
+                slide1_caption: 'مختبرات متقدمة: مهارات عملية في مرافق حديثة.',
+                slide2_caption: 'أعضاء هيئة تدريس متخصصون: تعلم من خبراء الصناعة.',
+                slide3_caption: 'النجاح المهني: معدلات توظيف عالية للخريجين في المنطقة.',
+            },
+            'ku': {
+                dir: 'rtl',
+                site_name: 'په‌یمانگه‌ها زاخۆ یا نە حکوومی',
+                welcome_headline: 'داهاتیێ چێدکەین، ئەڤرۆ. (سالا خواندنێ 2019 – 2025)',
+                welcome_text: 'مەرەما مە ئه‌وه‌ کو نه‌سلێ داهاتی ژ پرۆفیشینالێن ته‌کنیکی ل ده‌ڤه‌را دهۆکێ په‌روه‌ردە بکەین. رێکا سه‌رکه‌فتنێ بدۆزه‌ڤه‌ د ناڤ پرۆگرامێن مه‌ یێن ب داخوازیا بلند.',
+                nav_home: 'سەرەکی', nav_about: 'دید و پەیاما مە', nav_programs: 'پرۆگرامان', 
+                // UPDATED VISION & MISSION (Kurdish - Sorani Text)
+                about_title: 'دید و پەیاما پەیمانگەها زاخۆ یا نەحکومی (2019 – 2025)',
+                about_text: `دیدا په‌یمانگه‌هێ: دبه رەورەدەکا هەڤچەردا، رەهـ بەربایێ نەخشەیێ نشتیمانپەروەر و زانست خواز د ژینگەهـەکا بەرهەم داردا.
+                
+                
+                پەیاما په‌یمانگه‌هێ:1. گەشەپێدانا شیانێن پیشەیی یێن مامۆستا و پاشخەرێ کوالیتیا فێرکرنێ. 2. بەرزکرنا هەستێ نەتەوایەتی و پەرەستنا پەرەهەنگ و کەلتوورێ کوردی. 3. بەدەستڤەئینانا سەرکەستنێ و ئامادەکرنا سەردەم بـ یـیـێ فێرکـرنـێ. 4. گرنگیدان بـیــیـی و نـەرمینـتـنـا کۆمەڵایـیـی. 5. گرنگیدان بـ بەرهەم و داهێنانێت قوتابییان.`,
+                // END UPDATED VISION & MISSION
+                programs_title: 'به شييت  جوداجودا بدۆزەڤە',
+                programs_text: 'پرۆگرامێ خوە یێ تایبه‌تمه‌ند ل خوارێ بدۆزه‌ڤه‌. تێچوویێ خواندنێ گونجاوه‌ و ب سه‌ر پرۆگرامێن ب بهایێ کارکرنێ یێ زۆر ڤه‌ گرێدایه‌.',
+                contact_text: 'حازری ده‌ست ب داهاتیا خوە بکی؟ داخازنامێ پێشکێش بکه‌ بۆ وه‌رگرتنا پشکێن بهێت!',
+                program_petroleum_title: 'ئه‌ندازیاریا په‌ترۆل و گازی',
+                program_petroleum_price: 'تێچوو: 2,400,000 دینارێ عیراقی',
+                program_petroleum_desc: 'گرنگیێ ب گه‌ڕیان، بەرهەمئینان و پرۆسێن پالاوگه‌هکرنێ ل که‌رتێ وه‌رگازێ دده‌ت.',
+                program_computer_title: 'زانستێ کۆمپیوتەری و ئایتی',
+                program_computer_price: 'تێچوو: 1,400,000 دینارێ عیراقی',
+                program_computer_desc: 'راهێنانا پێشکه‌فتی ل سه‌ر په‌ره‌پێدانا سۆفتوێری، تۆڕ و شیکاریا داتایێ.',
+                program_accounting_title: 'ژمێریاری و دارایی',
+                program_accounting_price: 'تێچوو: 1,400,000 دینارێ عیراقی',
+                program_accounting_desc: 'په‌ره‌پێدانا ژێهاتیێن رێڤه‌برنا دارایی، ڤه‌کۆلینا ژمێریاری و رێڤه‌برنا کاران.',
+                // NEW PROGRAM ADDED
+                program_management_title: 'کارگێری (رێڤەبردن)',
+                program_management_price: 'تێچوو: 1,400,000 دینارێ عیراقی',
+                program_management_desc: 'پەیداکرنا ژێهاتییان بۆ ب رێڤەبرنا کارێن گشتی، سەرپەرشتیکرنا چالاكیێن دارایی و رێڤەبرنا تیمان.',
+                // UPDATED CONTACT INFO
+                footer_contact_title: 'په‌یوه‌ندی ب په‌یمانگه‌ها زاخو ڤه‌ بکه‌', 
+                footer_contact_address: 'زاخو - يه رامبه ر ( زانکۆیا زاخۆ)', 
+                footer_contact_phones: '0750 682 4545 / 0750 683 4545',
+                footer_quick_links: 'لینکێن بزووین', 
+                footer_dev: 'پەرەپێدان ژلایێ سالیم مستەفاڤە',
+                slide1_caption: 'تاقیگه‌هێن پێشکه‌فتی: لێهاتیێن پراکتیکی د په‌یمانگه‌هێن مۆدێرن دا.',
+                slide2_caption: 'مامۆستایێن سه‌ربلند: ژ لایه‌نێن پسپۆڕێن پیشه‌سازیێ فێربه‌.',
+                slide3_caption: 'سه‌رکه‌فتنا کارکرنێ: رێژه‌یێن بلند یێن دانانا ده‌رچوویان د ناڤچۆیێ دا.',
+            }
+        };
+
+        let currentLang = 'ku'; // Default set to Kurdish
+
+        function switchLanguage(lang) {
+            currentLang = lang;
+            const content = contentData[lang];
+            const body = document.querySelector('body');
+
+            // Set text direction
+            body.setAttribute('dir', content.dir);
+
+            // Update all text elements 
+            document.getElementById('site-name').textContent = content.site_name;
+            document.getElementById('welcome-headline').innerHTML = content.welcome_headline.replace(/\(([^)]+)\)/g, '<span class="text-warning-emphasis">($1)</span>'); // Highlight the year
+            document.getElementById('welcome-text').textContent = content.welcome_text;
+            document.getElementById('nav-home').textContent = content.nav_home;
+            document.getElementById('nav-about').textContent = content.nav_about;
+            document.getElementById('nav-programs').textContent = content.nav_programs;
+            document.getElementById('about-title').textContent = content.about_title;
+            // Use innerHTML for the about text to support multiline/bold formatting
+            document.getElementById('about-text').innerHTML = content.about_text.replace(/\n/g, '<br>'); 
+            document.getElementById('programs-title').textContent = content.programs_title;
+            document.getElementById('programs-text').textContent = content.programs_text;
+            document.getElementById('contact-text').textContent = content.contact_text;
+            document.getElementById('footer-dev').textContent = content.footer_dev;
+            document.getElementById('contact-title').textContent = content.footer_contact_title;
+            document.getElementById('contact-address').textContent = content.footer_contact_address;
+            document.getElementById('footer-contact-phones').textContent = content.footer_contact_phones; // NEW ID
+            document.getElementById('footer-quick-links').textContent = content.footer_quick_links;
+            
+            document.getElementById('prog-petroleum-title').textContent = content.program_petroleum_title;
+            document.getElementById('prog-petroleum-price').textContent = content.program_petroleum_price;
+            document.getElementById('prog-petroleum-desc').textContent = content.program_petroleum_desc;
+            
+            document.getElementById('prog-computer-title').textContent = content.program_computer_title;
+            document.getElementById('prog-computer-price').textContent = content.program_computer_price;
+            document.getElementById('prog-computer-desc').textContent = content.program_computer_desc;
+            
+            document.getElementById('prog-accounting-title').textContent = content.program_accounting_title;
+            document.getElementById('prog-accounting-price').textContent = content.program_accounting_price;
+            document.getElementById('prog-accounting-desc').textContent = content.program_accounting_desc;
+            
+            // NEW PROGRAM MANGEMENT
+            document.getElementById('prog-management-title').textContent = content.program_management_title;
+            document.getElementById('prog-management-price').textContent = content.program_management_price;
+            document.getElementById('prog-management-desc').textContent = content.program_management_desc;
+            
+            document.getElementById('slide1-caption').textContent = content.slide1_caption;
+            document.getElementById('slide2-caption').textContent = content.slide2_caption;
+            document.getElementById('slide3-caption').textContent = content.slide3_caption;
+            
+            // Update footer links language
+            document.getElementById('nav-about-footer').textContent = content.nav_about;
+            document.getElementById('nav-programs-footer').textContent = content.nav_programs;
+
+
+            // Update active button state
+            document.querySelectorAll('.lang-button').forEach(btn => {
+                btn.classList.remove('active', 'bg-success', 'text-white', 'btn-dark', 'btn-light');
+                
+                if (document.body.classList.contains('dark-mode')) {
+                    btn.classList.add('btn-dark', 'text-white');
+                } else {
+                    btn.classList.add('btn-light', 'text-dark');
+                }
+
+                if (btn.dataset.lang === lang) {
+                    btn.classList.add('active', 'bg-success', 'text-white');
+                    btn.classList.remove('btn-dark', 'btn-light', 'text-dark');
+                }
+            });
+        }
+
+        // Dark Mode Logic
+        function toggleDarkMode() {
+            const isDark = document.body.classList.toggle('dark-mode');
+            localStorage.setItem('darkMode', isDark);
+            
+            // Re-run color cycle function to reset light mode backgrounds if toggling
+            if (!isDark) {
+                cycleSectionColor(true); // Reset to base color when switching to light mode
+            }
+            switchLanguage(currentLang);
+        }
+        
+        // --- UPDATED: Automatic Section Color Cycle Logic ---
+        const cycleColors = [
+            '#ffffff',          // White
+            'rgb(220, 220, 220)',  // Light Gray (RGB)
+            '#f5f5f5'            // Whitesmoke
+        ];
+        let colorIndex = 0;
+
+        function cycleSectionColor(reset = false) {
+            const body = document.body;
+            
+            // Only apply the color cycle if Dark Mode is NOT active
+            if (!body.classList.contains('dark-mode')) {
+                // Find all elements targeted for light background (sections and cards)
+                const targetElements = document.querySelectorAll('.color-cycle-target');
+                
+                let nextColor;
+                if (reset) {
+                    nextColor = '#ffffff'; // Use white as the base reset color
+                    colorIndex = 0;
+                } else {
+                    nextColor = cycleColors[colorIndex];
+                    colorIndex = (colorIndex + 1) % cycleColors.length; // Cycle to the next color
+                }
+                
+                // Apply the next color to all targeted elements
+                targetElements.forEach(el => {
+                    el.style.backgroundColor = nextColor;
+                });
+            }
+        }
+        
+        // Set an interval to change the color every 10 seconds (10000ms)
+        setInterval(cycleSectionColor, 10000); 
+        // --- END UPDATED: Automatic Section Color Cycle Logic ---
+
+        // Back to Top Button Logic
+        window.onscroll = function() { scrollFunction() };
+
+        function scrollFunction() {
+            const btn = document.getElementById("backToTopBtn");
+            if (document.body.scrollTop > 500 || document.documentElement.scrollTop > 500) {
+                btn.style.display = "block";
+            } else {
+                btn.style.display = "none";
+            }
+        }
+
+        function topFunction() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        // Initialize content and dark mode on load
+        window.onload = () => {
+            // 1. Apply dark mode preference if stored
+            if (localStorage.getItem('darkMode') === 'true') {
+                document.body.classList.add('dark-mode');
+            } else {
+                 // Set initial background color for the cycle to start correctly
+                 cycleSectionColor(); 
+            }
+            
+            switchLanguage(currentLang); // DEFAULT TO KURDISH
+
+            // 2. Hide Preloader after 5 seconds
+            setTimeout(function() {
+                const preloader = document.getElementById('preloader');
+                if (preloader) {
+                    preloader.style.opacity = '0';
+                    setTimeout(function() {
+                        preloader.style.display = 'none';
+                    }, 500); // Wait for the fade out to finish (0.5s transition)
+                }
+            }, 5000); // 5000 milliseconds = 5 seconds
+        };
+    </script>
+
+    <header class="animated-header shadow-lg sticky-top z-3">
+        <nav class="navbar navbar-expand-lg navbar-dark p-3">
+            <div class="container-xl">
+                <a class="navbar-brand d-flex align-items-center" href="#">
+                    <img src="images/zakho-removebg-preview.png" onerror="this.onerror=null;this.src='https://placehold.co/150x70/1e3a8a/ffffff?text=ZAKHO+INSTITUTE';" alt="Zakho Institute Logo" class="header-logo me-2">
+                    <span id="site-name" class="fs-4 fw-bold text-white text-uppercase">Zakho Institute</span>
+                </a>
+
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0 fw-bold">
+                        <li class="nav-item"><a class="nav-link text-white hover:text-success" href="#home" id="nav-home">Home</a></li>
+                        <li class="nav-item"><a class="nav-link text-white hover:text-success" href="#about" id="nav-about">Vision & Mission</a></li>
+                        <li class="nav-item"><a class="nav-link text-white hover:text-success" href="#programs" id="nav-programs">Programs</a></li>
+                        </ul>
+
+                    <div class="d-flex align-items-center ms-lg-4 mt-3 mt-lg-0">
+                        <div class="btn-group me-3 p-1 rounded-pill bg-white shadow-sm">
+                            <button data-lang="en" onclick="switchLanguage('en')" class="lang-button btn btn-sm rounded-pill px-3 py-1 btn-light text-dark">EN</button>
+                            <button data-lang="ar" onclick="switchLanguage('ar')" class="lang-button btn btn-sm rounded-pill px-3 py-1 btn-light text-dark">AR</button>
+                            <button data-lang="ku" onclick="switchLanguage('ku')" class="lang-button btn btn-sm rounded-pill px-3 py-1 btn-light text-dark">KU</button>
+                        </div>
+                        <button onclick="toggleDarkMode()" class="btn btn-sm btn-outline-light rounded-circle p-2 shadow-sm">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <section id="home" class="video-hero-section shadow-lg">
+        <video autoplay muted loop playsinline poster="placeholder_image.jpg">
+            <source src="zakho.mp4.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        
+        <div class="video-overlay"></div>
+        
+        <div class="hero-content container-xl">
+            <span class="badge bg-success text-uppercase mb-2">Your Future Starts Here</span>
+            <h1 id="welcome-headline" class="display-3 fw-bolder text-white mb-4 serif-title">Shaping the Future, Today.</h1>
+            <p id="welcome-text" class="lead text-white text-opacity-75 mb-5 mx-auto" style="max-width: 800px;">
+                Dedicated to empowering the next generation of technical professionals in the Duhok region. Find your path to success in one of our high-demand programs.
+            </p>
+            
+            <a href="#programs" class="btn btn-success btn-lg fw-bold px-5 rounded-pill shadow-sm me-3">
+                Start Your Journey
+            </a>
+            </div>
+    </section>
+
+    <main class="py-5">
+        
+        <div id="instituteCarousel" class="carousel slide carousel-fade full-width-carousel" data-bs-ride="carousel" data-bs-interval="4000" data-bs-pause="hover">
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#instituteCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#instituteCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                <button type="button" data-bs-target="#instituteCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+            </div>
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <img src="photo_7_2025-10-19_00-56-32.jpg" onerror="this.onerror=null;this.src='https://placehold.co/1920x400/1e3a8a/ffffff?text=Slide+1';" class="d-block w-100" alt="Advanced Laboratories">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5 id="slide1-caption">Advanced Laboratories: Practical skills in modern facilities.</h5>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img src="photo_3_2025-10-19_00-56-32.jpg" onerror="this.onerror=null;this.src='https://placehold.co/1920x400/1e3a8a/ffffff?text=Slide+2';" class="d-block w-100" alt="Dedicated Faculty">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5 id="slide2-caption">Dedicated Faculty: Learn from industry experts and professionals.</h5>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img src="photo_2_2025-10-19_00-56-32.jpg" onerror="this.onerror=null;this.src='https://placehold.co/1920x400/1e3a8a/ffffff?text=Slide+3';" class="d-block w-100" alt="Career Success">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5 id="slide3-caption">Career Success: High graduate placement rates in the region.</h5>
+                    </div>
+                </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#instituteCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#instituteCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+        
+        <section id="about" class="container-xl py-5 color-cycle-target">
+            <div class="text-center mb-5">
+                <h2 id="about-title" class="display-5 fw-bolder text-primary">Our Non-Governmental Vision & Mission (2024-2025)</h2>
+                <div class="d-flex justify-content-center">
+                    <hr class="border border-success border-3 opacity-100 w-25">
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div id="about-text" class="lead text-dark text-opacity-75 text-center px-4">
+                        Vision: To be a modern development, deep-rooted in the patriotic and science-seeking plan, in a productive environment.
+
+                        Mission: 1. Developing the professional capabilities of teachers and enhancing the quality of education. 2. Raising the sense of nationalism and protecting the Kurdish heritage and culture. 3. Modernizing learning methodologies for student success while preserving character/ethics. 4. Focusing on social development and promoting Kurdish identity. 5. Emphasizing student production and innovations.
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <hr class="my-5 opacity-25">
+
+        <section id="programs" class="container-xl py-5">
+            <div class="text-center mb-5">
+                <h2 id="programs-title" class="display-5 fw-bolder text-primary">Explore Our Diverse Programs</h2>
+                <div class="d-flex justify-content-center">
+                    <hr class="border border-success border-3 opacity-100 w-50 w-md-25">
+                </div>
+                <p id="programs-text" class="lead text-secondary mt-3">
+                    Find your specialized program below. Tuition fees are competitive and focused on providing maximum career value.
+                </p>
+            </div>
+            
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+                
+                <div class="col">
+                    <div class="card h-100 p-3 shadow-lg border-primary content-card bg-light color-cycle-target">
+                        <img src="patrol.jpg" onerror="this.onerror=null;this.src='https://placehold.co/600x150/1e3a8a/ffffff?text=Petroleum+Eng';" class="program-image card-img-top" alt="Petroleum and Gas Engineering">
+                        <div class="card-body p-0">
+                            <h5 id="prog-petroleum-title" class="card-title fw-bold text-primary mb-2">Petroleum & Gas Engineering</h5>
+                            <p id="prog-petroleum-price" class="card-text text-success fw-bold">Tuition: 2,400,000 IQD</p>
+                            <p id="prog-petroleum-desc" class="card-text text-muted small">Focus on exploration, production, and refining processes in the energy sector.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="card h-100 p-3 shadow-lg border-success content-card bg-light color-cycle-target">
+                        <img src="com.jpg" onerror="this.onerror=null;this.src='https://placehold.co/600x150/10b981/ffffff?text=Computer+Science';" class="program-image card-img-top" alt="Computer Science and IT">
+                        <div class="card-body p-0">
+                            <h5 id="prog-computer-title" class="card-title fw-bold text-primary mb-2">Computer Science & IT</h5>
+                            <p id="prog-computer-price" class="card-text text-success fw-bold">Tuition: 1,400,000 IQD</p>
+                            <p id="prog-computer-desc" class="card-text text-muted small">Advanced training in software development, networking, and data analysis.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="card h-100 p-3 shadow-lg border-warning content-card bg-light color-cycle-target">
+                        <img src="acc.jpg" onerror="this.onerror=null;this.src='https://placehold.co/600x150/f59e0b/ffffff?text=Accounting';" class="program-image card-img-top" alt="Accounting and Finance">
+                        <div class="card-body p-0">
+                            <h5 id="prog-accounting-title" class="card-title fw-bold text-primary mb-2">Accounting & Finance</h5>
+                            <p id="prog-accounting-price" class="card-text text-success fw-bold">Tuition: 1,400,000 IQD</p>
+                            <p id="prog-accounting-desc" class="card-text text-muted small">Developing financial management, auditing, and business administration skills.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <div class="card h-100 p-3 shadow-lg border-info content-card bg-light color-cycle-target">
+                        <img src="man.jpg" onerror="this.onerror=null;this.src='https://placehold.co/600x150/3b82f6/ffffff?text=Management';" class="program-image card-img-top" alt="Business Administration Management">
+                        <div class="card-body p-0">
+                            <h5 id="prog-management-title" class="card-title fw-bold text-primary mb-2">Business Administration (Management)</h5>
+                            <p id="prog-management-price" class="card-text text-success fw-bold">Tuition: 1,400,000 IQD</p>
+                            <p id="prog-management-desc" class="card-text text-muted small">Preparing students to manage general operations, oversee financial activities, and lead teams.</p>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+            
+            <div class="text-center mt-5 p-4 bg-light shadow-sm rounded-3 color-cycle-target">
+                <p id="contact-text" class="lead fw-bold text-dark mb-3">Ready to start your future? Apply for the next intake!</p>
+                <a href="#" class="btn btn-primary btn-lg fw-bold px-5 rounded-pill shadow">Apply Now <i class="fas fa-arrow-right ms-2"></i></a>
+            </div>
+            
+        </section>
+
+    </main>
+
+    <footer class="animated-footer text-white pt-5 pb-3">
+        <div class="container-xl">
+            <div class="row">
+                
+                <div class="col-md-5 mb-4">
+                    <h5 id="contact-title" class="fw-bold text-uppercase border-bottom border-success pb-2 mb-3">Contact Zakho Institute</h5>
+                    <p class="mb-1"><i class="fas fa-map-marker-alt me-2 text-success"></i> <span id="contact-address">Zakho - Next (Near University of Zakho)</span></p>
+                    <p class="mb-1"><i class="fas fa-phone me-2 text-success"></i> <span id="footer-contact-phones">0750 682 4545 / 0750 683 4545</span></p>
+                    <p class="mb-1"><i class="fas fa-envelope me-2 text-success"></i> info@zakhoinstitute.edu.krd</p>
+
+                    <div class="mt-4 fs-4">
+                        
+                        <a href="https://www.tiktok.com/@zakhoinstitute" class="text-white me-3" target="_blank" aria-label="TikTok">
+                            <i class="fab fa-tiktok footer-icon"></i> 
+                        </a>
+
+                        <a href="https://wa.me/9647506824545" class="text-white me-3" target="blank" aria-label="WhatsApp">
+                            <i class="fab fa-whatsapp footer-icon"></i>
+                        </a>
+                        
+                        <a href="https://www.instagram.com/zakhoinstitute" class="text-white me-3" target="blank" aria-label="Instagram">
+                            <i class="fab fa-instagram footer-icon"></i>
+                        </a>
+
+                        </div>
+                </div>
+
+                <div class="col-md-3 mb-4">
+                    <h5 id="footer-quick-links" class="fw-bold text-uppercase border-bottom border-success pb-2 mb-3">Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#about" class="footer-link"><i class="fas fa-caret-right me-2 text-success"></i> <span id="nav-about-footer">Vision & Mission</span></a></li>
+                        <li class="mb-2"><a href="#programs" class="footer-link"><i class="fas fa-caret-right me-2 text-success"></i> <span id="nav-programs-footer">Programs</span></a></li>
+                        <li class="mb-2"><a href="#" class="footer-link"><i class="fas fa-caret-right me-2 text-success"></i> Apply Now</a></li>
+                        <li class="mb-2"><a href="#" class="footer-link"><i class="fas fa-caret-right me-2 text-success"></i> FAQs</a></li>
+                    </ul>
+                </div>
+                
+                <div class="col-md-4 mb-4 text-center text-md-end">
+                    <img src="images/zakho-removebg-preview.png" onerror="this.onerror=null;this.src='https://placehold.co/150x70/ffffff/1e3a8a?text=ZAKHO';" alt="Zakho Institute Logo" class="img-fluid" style="height: 100px;">
+                    <p class="mt-3 lead fw-bold text-success">Empowering the Future.</p>
+                </div>
+            </div>
+            
+            <hr class="mt-3 mb-3 border-success opacity-50">
+            
+            <div class="text-center text-md-start small">
+                &copy; <span id="currentYear"></span> Zakho Institute. All Rights Reserved.
+                <div class="d-inline-block float-md-end">
+                    <a href="https://www.instagram.com/sallimmustafaaa?igsh=ODJvbXdrNThlZThv" target="_blank" class="dev-attribution-container text-white small">
+                        <img src="images/salo.jpg" onerror="this.onerror=null;this.src='https://placehold.co/30x30/10b981/ffffff?text=SM';" class="dev-profile-img" alt="Salim Mustefa">
+                        <span id="footer-dev">Developed by Salim Mustefa</span>
+                    </a>
+                </div>
+            </div>
+            
+        </div>
+    </footer>
+
+    <button onclick="topFunction()" id="backToTopBtn" title="Go to top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script>
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+        // Make sure the language is set correctly on initial load
+        switchLanguage(currentLang);
+    </script>
+</body>
+</html>
